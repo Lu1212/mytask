@@ -1,0 +1,29 @@
+.Shifter {
+    position: absolute;
+    display: flex;
+    top: 40px;
+    right: 20%;
+    width: 30%;
+    height: 60px;
+    line-height: 60px;
+    color: rgb(122, 154, 196);
+    text-align: center;
+    li {
+        flex: 1;
+        position: relative;
+        span {
+            position: absolute;
+            top: 0;
+            right: 0;
+            color: rgb(255, 255, 255);
+        }
+        &:last-child {
+            span {
+                display: none;
+            }
+        }
+        &.active {
+            color: rgb(255, 255, 255);
+        }
+    }
+}

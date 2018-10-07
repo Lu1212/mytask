@@ -1,0 +1,20 @@
+.Tab {
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 40%;
+    height: 40px;
+    line-height: 40px;
+    color: rgb(122, 154, 196);
+    background: rgb(43, 89, 149);
+    text-align: center;
+    li {
+        flex: 1;
+        display: inline-block;
+        &.current {
+            color: rgb(255, 255, 255);
+            background: rgb(17, 67, 138);
+        }
+    }
+}

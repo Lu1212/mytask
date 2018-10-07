@@ -1,0 +1,35 @@
+.Department {
+    display: flex;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 60%;
+    height: 40px;
+    line-height: 40px;
+    color: rgb(255, 255, 255);
+    background: transparent;
+    text-align: center;
+    .Department-item {
+        flex: 1;
+        display: inline-block;
+        .icon {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            margin-right: 5px;
+            border-radius: 50%;
+            &.red {
+                background: rgb(255, 0, 0)
+            }
+            &.yellow {
+                background: rgb(255, 255, 0)
+            }
+            &.blue {
+                background: rgb(92, 138, 249)
+            }
+        }
+        .name {
+            display: inline-block;
+        }
+    }
+}
