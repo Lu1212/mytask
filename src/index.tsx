@@ -277,7 +277,7 @@ const reducer = (state=allData, action: any) => {
         case 'ADD_INDEX':
             let newIndex = state.config.current_index
             newIndex ++
-            // console.log('add', state.config.current_index, newIndex)
+            console.log('add', state.config.current_index, newIndex)
             if(newIndex > state.security.max_index) {
                 return Object.assign({}, state, {
                     "config": {
@@ -294,7 +294,7 @@ const reducer = (state=allData, action: any) => {
             }
 
         case 'TAB_INDEX':
-            // console.log("TAB_INDEX", action.index)
+            console.log("TAB_INDEX", action.index)
             return Object.assign({}, state, {
                 "config": {
                     "current_index": action.index
@@ -302,7 +302,7 @@ const reducer = (state=allData, action: any) => {
             })
         
         case 'SHIFTER_INDEX':
-            // console.log("SHIFTER_INDEX", action.index)
+            console.log("SHIFTER_INDEX", action.index)
             return Object.assign({}, state, {
                 "config": {
                     "current_index": action.index
@@ -310,7 +310,7 @@ const reducer = (state=allData, action: any) => {
             })
 
         case 'CHANGE_MAX_INDEX':
-            // console.log('CHANGE_MAX_INDEX', action.index)
+            console.log('CHANGE_MAX_INDEX', action.index)
             let tag = 0
             return Object.assign({}, state, {
                 "security": {
@@ -329,17 +329,6 @@ const reducer = (state=allData, action: any) => {
 }
 
 export const store = createStore(reducer);
-
-function addINdex() {
-    return {
-        type: 'ADD_INDEX'
-    }
-}
-
-setInterval(() => {
-    store.dispatch(addINdex())
-}, 10000)
-
 
 ReactDOM.render(
     <Provider store={store}>
