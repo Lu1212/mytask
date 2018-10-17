@@ -3,12 +3,14 @@ import { connect } from 'react-redux'
 
 import './MainBody.less'
 
-import Content from '../Content/Content'
+import Chart from '../Chart/Chart'
 import Department from '../Department/Department'
+import Shifter from '../Shifter/Shifter'
 import Tab from '../Tab/Tab'
+import Title from '../Title/Title'
 
 interface Iprops {
-    addIndex: any
+    addIndex: () => void
 }
 
 interface Istate {
@@ -27,7 +29,9 @@ class MainBody extends React.Component<Iprops, Istate> {
             <div className="MainBody">
                 <Tab />
                 <Department />
-                <Content />
+                <Title />
+                <Shifter />
+                <Chart />
             </div>
         );
     }
@@ -35,7 +39,6 @@ class MainBody extends React.Component<Iprops, Istate> {
     public componentDidMount(){
         this.setState({
             timer: setInterval(() => {
-                console.log(123)
                 this.props.addIndex()
             }, 2000)
         })
@@ -44,10 +47,6 @@ class MainBody extends React.Component<Iprops, Istate> {
     public componentWillUnmount() {
         clearInterval(this.state.timer)
     }
-}
-
-function mapStateToProps() {
-    // return state
 }
 
 function mapDispatchToProps(dispatch: any) {
@@ -60,4 +59,4 @@ function mapDispatchToProps(dispatch: any) {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MainBody);
+export default connect(null, mapDispatchToProps)(MainBody);
