@@ -10,7 +10,7 @@ interface Iprops {
         max_index: number,
     },
     current_index: number,
-    changeIndex: (index: number) => void
+    changeIndex: (newIndex: number) => void
 }
 
 class Tab extends React.Component<Iprops, {}> {

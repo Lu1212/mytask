@@ -3,7 +3,11 @@ import { connect } from 'react-redux'
 
 import './Department.less'
 
-function Department(props: any) {
+interface Iprops {
+    current_index: number
+}
+
+function Department(props: Iprops) {
     const Departments = (
         <ul className="Department">
             <li className="Department-item">
@@ -20,7 +24,7 @@ function Department(props: any) {
             </li>
         </ul>
     )
-    if(props.config.current_index < 9) {
+    if(props.current_index < 9) {
         return (
             <React.Fragment>
                 {Departments}
@@ -33,7 +37,9 @@ function Department(props: any) {
 }
 
 function mapStateToProps(state: any) {
-    return state
+    return {
+        current_index: state.config.current_index
+    }
 }
 
 export default connect(mapStateToProps)(Department);

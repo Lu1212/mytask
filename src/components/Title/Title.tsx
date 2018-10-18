@@ -3,8 +3,12 @@ import { connect } from 'react-redux'
 
 import './Title.less'
 
-function Title(props: any) {
-    if(props.config.current_index < 9) {
+interface Iprops {
+    current_index: number
+}
+
+function Title(props: Iprops) {
+    if(props.current_index < 9) {
         return (
             <div className="Title">
                 安全风险管控检查信息走势图
@@ -21,7 +25,9 @@ function Title(props: any) {
 }
 
 function mapStateToProps(state: any) {
-    return state
+    return {
+        current_index: state.config.current_index
+    }
 }
 
 export default connect(mapStateToProps)(Title);
