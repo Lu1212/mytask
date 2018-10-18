@@ -1,7 +1,7 @@
 //  reducer
 import { allData } from './data'
 
-export const reducer = (state=allData, action: any) => {
+export const reducer = (state=allData, action: {type: string, index?: number}) => {
     switch (action.type) {
         case 'ADD_INDEX':
             let newIndex = state.config.current_index
@@ -22,22 +22,14 @@ export const reducer = (state=allData, action: any) => {
                 })
             }
 
-        case 'TAB_INDEX':
-            console.log("TAB_INDEX", action.index)
+        case 'CHANGE_INDEX':
+            console.log("CHANGE_INDEX", action.index)
             return Object.assign({}, state, {
                 "config": {
                     "current_index": action.index
                 }
             })
         
-        case 'SHIFTER_INDEX':
-            console.log("SHIFTER_INDEX", action.index)
-            return Object.assign({}, state, {
-                "config": {
-                    "current_index": action.index
-                }
-            })
-
         case 'CHANGE_MAX_INDEX':
             console.log('CHANGE_MAX_INDEX', action.index)
             let tag = 0

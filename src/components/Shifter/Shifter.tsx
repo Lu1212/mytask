@@ -6,7 +6,7 @@ import './Shifter.less'
 interface Iprops {
     state: any,
     current_index: any,
-    shifterIndex: any
+    changeIndex: any
 }
 
 class Shifter extends React.Component<Iprops> {
@@ -15,7 +15,7 @@ class Shifter extends React.Component<Iprops> {
     }
 
     public shifterClick(index: any) {
-        this.props.shifterIndex(index)
+        this.props.changeIndex(index)
     }
     public render() {
         const current_index = this.props.current_index
@@ -72,10 +72,10 @@ function mapStateToProps(state: any) {
 
 function mapDispatchToProps(dispatch: any) {
     return{ 
-        shifterIndex(newIndex: any) {
+        changeIndex(newIndex: any) {
             dispatch({
                 index: newIndex,
-                type: 'SHIFTER_INDEX',
+                type: 'CHANGE_INDEX',
             })
         }
     }
