@@ -17,6 +17,7 @@ interface Istate {
     timer: any
 }
 
+//  移除connect
 class MainBody extends React.Component<Iprops, Istate> {
     constructor(props: any) {
         super(props);
@@ -36,6 +37,7 @@ class MainBody extends React.Component<Iprops, Istate> {
         );
     }
 
+    //  把定时器移到这里
     public componentDidMount(){
         this.setState({
             timer: setInterval(() => {
@@ -44,6 +46,7 @@ class MainBody extends React.Component<Iprops, Istate> {
         })
     }
 
+    //  卸载是清除定时器
     public componentWillUnmount() {
         clearInterval(this.state.timer)
     }
