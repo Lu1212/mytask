@@ -4,17 +4,21 @@ import { connect } from 'react-redux'
 import './Tab.less'
 
 interface Iprops {
-    state: any,
+    state: {
+        ZH_name: string,
+        min_index: number,
+        max_index: number,
+    },
     current_index: number,
     changeIndex: (index: number) => void
 }
 
 class Tab extends React.Component<Iprops, {}> {
-    constructor(props: any) {
+    constructor(props: Iprops) {
         super(props)
     }
 
-    public tabClick(index: number) {
+    public tabClick(index: number): void {
         this.props.changeIndex(index)
     }
 
@@ -56,10 +60,10 @@ function mapStateToProps(state: any) {
 
 function mapDispatchToProps(dispatch: any) {
     return{ 
-        changeIndex(newIndex: number) {
+        changeIndex(newIndex: number): void {
             dispatch({
-                index: newIndex,
                 type: 'CHANGE_INDEX',
+                index: newIndex,
             })
         }
     }
