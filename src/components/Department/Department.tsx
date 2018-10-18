@@ -8,32 +8,35 @@ interface Iprops {
 }
 
 function Department(props: Iprops) {
-    const Departments = (
-        <ul className="Department">
-            <li className="Department-item">
-                <span className="icon red" />
-                <p className="name">成都动车段</p>
-            </li>
-            <li className="Department-item">
-                <span className="icon yellow" />
-                <p className="name">贵阳车辆段</p>
-            </li>
-            <li className="Department-item">
-                <span className="icon blue" />
-                <p className="name">重庆动车段</p>
-            </li>
-        </ul>
-    )
+    let Departments: JSX.Element | null
+
     if(props.current_index < 9) {
-        return (
-            <React.Fragment>
-                {Departments}
-            </React.Fragment>
+        Departments = (
+            <ul className="Department">
+                <li className="Department-item">
+                    <span className="icon red" />
+                    <p className="name">成都动车段</p>
+                </li>
+                <li className="Department-item">
+                    <span className="icon yellow" />
+                    <p className="name">贵阳车辆段</p>
+                </li>
+                <li className="Department-item">
+                    <span className="icon blue" />
+                    <p className="name">重庆动车段</p>
+                </li>
+            </ul>
         )
     }
     else {
-        return null
+        Departments = null
     }
+
+    return (
+        <React.Fragment>
+            {Departments}
+        </React.Fragment>
+    )
 }
 
 function mapStateToProps(state: any) {

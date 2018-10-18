@@ -18,11 +18,22 @@ class Tab extends React.Component<Iprops, {}> {
         super(props)
     }
 
-    public tabClick(index: number): void {
+    public render() {
+        const tabItem = this.initTabItem()
+        return (
+            <React.Fragment>
+                <ul className="Tab">
+                    {tabItem}
+                </ul>
+            </React.Fragment>
+        )
+    }
+
+    private tabClick(index: number): void {
         this.props.changeIndex(index)
     }
 
-    public render() {
+    private initTabItem() {
         const obj = this.props.state
         const current_index = this.props.current_index
         
@@ -41,13 +52,8 @@ class Tab extends React.Component<Iprops, {}> {
             }
             return
         })
-        return (
-            <React.Fragment>
-                <ul className="Tab">
-                    {tabItem}
-                </ul>
-            </React.Fragment>
-        )
+
+        return tabItem
     }
 }
 

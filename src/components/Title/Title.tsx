@@ -8,20 +8,20 @@ interface Iprops {
 }
 
 function Title(props: Iprops) {
+    let text: string
+
     if(props.current_index < 9) {
-        return (
-            <div className="Title">
-                安全风险管控检查信息走势图
-            </div>
-        );
+        text = '安全风险管控检查信息走势图'
     }
     else {
-        return (
-            <div className="Title">
-                劳动安全风险管控图
-            </div>
-        );
+        text = '劳动安全风险管控图'
     }
+
+    return (
+        <div className="Title">
+            {text}
+        </div>
+    )
 }
 
 function mapStateToProps(state: any) {
