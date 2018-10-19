@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from 'react'
 import { connect } from 'react-redux'
 
 import './Shifter.less'
@@ -7,7 +7,7 @@ interface Iprops {
     state: {
         type: string,
         min_index: number,
-        max_index: number,
+        max_index: number
     },
     current_index: number,
     changeIndex: (newIndex: number) => void
@@ -39,31 +39,28 @@ class Shifter extends React.Component<Iprops, {}> {
         let classIndex: number
         let minIndex: number
         let objChild: any
-        let ShifterItem: JSX.Element[] | null
+        let ShifterItem: any
         
         if(this.props.current_index < 9) {
             Object.keys(obj).map((key: string) => {
                 if((obj[key].type === 'line') && (obj[key].min_index <= current_index) && (current_index <= obj[key].max_index)) {
                     minIndex = obj[key].min_index
                     objChild = obj[key].accident
-                    Object.keys(objChild).map((childKey: string) => {
-                        if(objChild[childKey].type_index === current_index) {
-                            classIndex = objChild[childKey].class_index
-                        }
-                    })
+                    ShifterItem = (
+                        Object.keys(objChild).map((childKey: string, index: number) => {
+                            if(objChild[childKey].type_index === current_index) {
+                                classIndex = objChild[childKey].class_index
+                            }
+                            if(index === classIndex) {
+                                return <li className="active" key={index}>{objChild[childKey].name}<span>/</span></li>
+                            }
+                            else {
+                                return <li key={index} onClick={this.shifterClick.bind(this, (minIndex + index))}>{objChild[childKey].name}<span>/</span></li>
+                            }
+                        })
+                    )
                 }
             })
-        
-            ShifterItem = (
-                Object.keys(objChild).map((childKey: string, index: number) => {
-                    if(index === classIndex) {
-                        return <li className="active" key={index}>{objChild[childKey].name}<span>/</span></li>
-                    }
-                    else {
-                        return <li key={index} onClick={this.shifterClick.bind(this, (minIndex + index))}>{objChild[childKey].name}<span>/</span></li>
-                    }
-                })
-            )
             return ShifterItem
         }
         return
@@ -86,10 +83,10 @@ function mapDispatchToProps(dispatch: any) {
         changeIndex(newIndex: number): void {
             dispatch({
                 type: 'CHANGE_INDEX',
-                index: newIndex,
+                index: newIndex
             })
         }
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Shifter);
+export default connect(mapStateToProps, mapDispatchToProps)(Shifter)
