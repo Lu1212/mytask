@@ -4,62 +4,73 @@ import { connect } from 'react-redux'
 import './Shifter.less'
 
 interface Iprops {
-    state: any,
-    current_index: any,
-    changeIndex: any
+    state: {
+        type: string,
+        min_index: number,
+        max_index: number,
+    },
+    current_index: number,
+    changeIndex: (newIndex: number) => void
 }
 
-class Shifter extends React.Component<Iprops> {
-    constructor(props: any) {
+class Shifter extends React.Component<Iprops, {}> {
+    constructor(props: Iprops) {
         super(props)
     }
-
-    public shifterClick(index: any) {
-        this.props.changeIndex(index)
-    }
-    public render() {
-        const current_index = this.props.current_index
-
-        if(current_index < 9) {
-            const obj = this.props.state
-            const items = ['火灾爆炸', '配件脱落', '制动抱闸']
-            let classIndex: any = null
-            let minIndex: any = null
-            
-            Object.keys(obj).map((key) => {
-                if(obj[key].type === 'line') {
-                    if(obj[key].min_index <= current_index) {
-                        if(current_index <= obj[key].max_index) {
-                            minIndex = obj[key].min_index
-                            const objChild: any = obj[key].accident
-                            Object.keys(objChild).map((childKey) => {
-                                if(objChild[childKey].type_index === current_index) {
-                                    classIndex= objChild[childKey].class_index
-                                }
-                            })
-                        }
-                    }
-                }
-            })
     
-            const ShifterItem = items.map((item, index) => {
-                if(index === classIndex) {
-                    return <li className="active" key={index}>{item}<span>/</span></li>
+    public render() {
+        const ShifterItem = this.initShifterItem()
+
+        return (
+            <React.Fragment>
+                {
+                    (this.props.current_index < 9) &&
+                    <ul className="Shifter">
+                        {ShifterItem}
+                    </ul>
                 }
-                else {
-                    return <li key={index} onClick={this.shifterClick.bind(this, (minIndex + index))}>{item}<span>/</span></li>
+            </React.Fragment>
+        )
+    }
+
+    private initShifterItem() {
+        const obj = this.props.state
+        const current_index: number = this.props.current_index
+        let classIndex: number
+        let minIndex: number
+        let objChild: any
+        let ShifterItem: JSX.Element[] | null
+        
+        if(this.props.current_index < 9) {
+            Object.keys(obj).map((key: string) => {
+                if((obj[key].type === 'line') && (obj[key].min_index <= current_index) && (current_index <= obj[key].max_index)) {
+                    minIndex = obj[key].min_index
+                    objChild = obj[key].accident
+                    Object.keys(objChild).map((childKey: string) => {
+                        if(objChild[childKey].type_index === current_index) {
+                            classIndex = objChild[childKey].class_index
+                        }
+                    })
                 }
-                
             })
-            return (
-                <ul className="Shifter">
-                    {ShifterItem}
-                </ul>
-            );
+        
+            ShifterItem = (
+                Object.keys(objChild).map((childKey: string, index: number) => {
+                    if(index === classIndex) {
+                        return <li className="active" key={index}>{objChild[childKey].name}<span>/</span></li>
+                    }
+                    else {
+                        return <li key={index} onClick={this.shifterClick.bind(this, (minIndex + index))}>{objChild[childKey].name}<span>/</span></li>
+                    }
+                })
+            )
+            return ShifterItem
         }
-        else {
-            return null
-        }
+        return
+    }
+
+    private shifterClick(index: number) {
+        this.props.changeIndex(index)
     }
 }
 
@@ -72,10 +83,10 @@ function mapStateToProps(state: any) {
 
 function mapDispatchToProps(dispatch: any) {
     return{ 
-        changeIndex(newIndex: any) {
+        changeIndex(newIndex: number): void {
             dispatch({
-                index: newIndex,
                 type: 'CHANGE_INDEX',
+                index: newIndex,
             })
         }
     }
