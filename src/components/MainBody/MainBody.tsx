@@ -5,11 +5,13 @@ import './MainBody.less'
 
 import Chart from '../Chart/Chart'
 import Department from '../Department/Department'
+import Pie from '../Pie/Pie'
 import Shifter from '../Shifter/Shifter'
 import Tab from '../Tab/Tab'
 import Title from '../Title/Title'
 
 interface Iprops {
+    current_index: number,
     addIndex: () => void
 }
 
@@ -32,7 +34,9 @@ class MainBody extends React.Component<Iprops, Istate> {
                 <Department />
                 <Title />
                 <Shifter />
-                <Chart />
+                <div className='content'>
+                    {(this.props.current_index < 9) ? <Chart /> : <Pie />}
+                </div>
             </div>
         );
     }
@@ -52,6 +56,12 @@ class MainBody extends React.Component<Iprops, Istate> {
     }
 }
 
+function mapStateToProps(state: any) {
+    return {
+        current_index: state.config.current_index
+    }
+}
+
 function mapDispatchToProps(dispatch: any) {
     return{
         addIndex() {
@@ -62,4 +72,4 @@ function mapDispatchToProps(dispatch: any) {
     }
 }
 
-export default connect(null, mapDispatchToProps)(MainBody);
+export default connect(mapStateToProps, mapDispatchToProps)(MainBody);
