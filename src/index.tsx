@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { store } from './components/store';
 import './reset.less';
+import { store } from './store';
 
 import MainBody from './components/MainBody/MainBody';
 import registerServiceWorker from './registerServiceWorker';
