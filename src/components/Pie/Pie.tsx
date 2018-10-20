@@ -57,7 +57,7 @@ class Pie extends React.Component<Iprops, {}> {
         let percent = 0;  //  占比
         Object.keys(obj).map((key, index) => {
             sum = sum + obj[key].value
-            if(current_index === (index + 9)) {
+            if (current_index === (index + 9)) {
                 legend.push(obj[key].name)
                 numerator = obj[key].value
             }
@@ -76,7 +76,7 @@ class Pie extends React.Component<Iprops, {}> {
         let nonZero: number;
 
         Object.keys(obj).map((key) => {
-            if(obj[key].count !== 0) {
+            if (obj[key].count !== 0) {
                 pieData.push({
                     "name": obj[key].name,
                     "value": obj[key].count
@@ -90,7 +90,7 @@ class Pie extends React.Component<Iprops, {}> {
         nonZero = nonZeroData.length
 
         Object.keys(obj).map((key) => {
-            if(obj[key].count === 0) {
+            if (obj[key].count === 0) {
                 pieData.push({
                     "name": obj[key].name,
                     "value": obj[key].count
@@ -159,7 +159,7 @@ class Pie extends React.Component<Iprops, {}> {
         const current_index = this.props.current_index
         const item = Object.keys(obj).map((key, index) => {
             let isActive = ''
-            if(current_index === (index + 9)) {
+            if (current_index === (index + 9)) {
                 isActive = 'active'
             }
             return  (

@@ -2,7 +2,7 @@
  *  接收current_index，根据current_index的值决定渲染那一条文本，对应的直线图还是饼图
  *  影响因素：
  *    外部：current_index
- *    内部：18行可修改文本
+ *    内部：19行可修改文本
  */
 
 import * as React from 'react';

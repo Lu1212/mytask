@@ -3,7 +3,7 @@
  *  当current_indx < 9（此时加载Pie组件）时隐藏
  *  影响因素：
  *    外部：current_index
- *    内部：25、29、33行修改部门名称
+ *    内部：26、30、34行修改部门名称
  *          同级目录下的less文件修改对应的标记颜色
  */
 
@@ -18,7 +18,7 @@ interface Iprops {
 function Department(props: Iprops) {
     let Departments: JSX.Element | null
 
-    if(props.current_index < 9) {
+    if (props.current_index < 9) {
         Departments = (
             <ul className="Department">
                 <li className="Department-item">

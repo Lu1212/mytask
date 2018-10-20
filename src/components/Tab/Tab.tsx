@@ -37,25 +37,30 @@ class Tab extends React.Component<Iprops, {}> {
 
     private initTabItem() {
         const obj = this.props.state;
-        const current_index = this.props.current_index;
         
         //  遍历obj，若current_index在当前项min_index ~ max_index区间内，则高亮当前项
         const tabItem = Object.keys(obj).map((key, index) => {
-            if(obj[key].ZH_name) {
-                let isCruuent = ''
-                if((obj[key].min_index <= current_index) && (current_index <= obj[key].max_index)) {
-                    isCruuent = 'current'
-                }
-                return(
-                    //  点击tab将current_index设置为tab对应的min_index实现跳转
-                    <li className={isCruuent} key={index} onClick={this.tabClick.bind(this, obj[key].min_index)}>
-                        {obj[key].ZH_name}
-                    </li>
-                );
+            const current_index = this.props.current_index;
+            let isCruuent = '';
+            
+            if (!obj[key].ZH_name) {
+                return;
             }
-            return;
+
+            if ((obj[key].min_index <= current_index) &&
+                (current_index <= obj[key].max_index)) {
+                isCruuent = 'current'
+            }
+
+            return (
+                //  点击tab将current_index设置为tab对应的min_index实现跳转
+                <li className={isCruuent}
+                    key={index} 
+                    onClick={this.tabClick.bind(this, obj[key].min_index)}>
+                    {obj[key].ZH_name}
+                </li>
+            );
         });
-        
         return tabItem;
     }
 }

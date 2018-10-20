@@ -35,12 +35,10 @@ class Shifter extends React.Component<Iprops, {}> {
         //  由current_index决定是否显示组件
         return (
             <React.Fragment>
-                {
-                    (this.props.current_index < 9) &&
+                {(this.props.current_index < 9) &&
                     <ul className="Shifter">
                         {ShifterItem}
-                    </ul>
-                }
+                    </ul>}
             </React.Fragment>
         );
     }
@@ -53,31 +51,41 @@ class Shifter extends React.Component<Iprops, {}> {
         let objChild: any;
         let ShifterItem: any;
         
-        if(this.props.current_index < 9) {
-            Object.keys(obj).map((key) => {
-                if((obj[key].type === 'line') && (obj[key].min_index <= current_index) && (current_index <= obj[key].max_index)) {
-                    minIndex = obj[key].min_index
-                    objChild = obj[key].accident
-                    ShifterItem = (
-                        Object.keys(objChild).map((childKey, index) => {
-                            //  获取高亮项index
-                            if(objChild[childKey].type_index === current_index) {
-                                classIndex = objChild[childKey].class_index
-                            }
-                            //  点击高亮项不会派发shifterClick事件
-                            if(index === classIndex) {
-                                return <li className="active" key={index}>{objChild[childKey].name}<span>/</span></li>;
-                            }
-                            else {
-                                return <li key={index} onClick={this.shifterClick.bind(this, (minIndex + index))}>{objChild[childKey].name}<span>/</span></li>;
-                            }
-                        })
-                    )
-                }
-            })
-            return ShifterItem;
+        if (this.props.current_index >= 9) {
+            return
         }
-        return;
+        
+        Object.keys(obj).map((key) => {
+            if ((obj[key].type === 'line') &&
+                (obj[key].min_index <= current_index) &&
+                (current_index <= obj[key].max_index)) {
+                minIndex = obj[key].min_index
+                objChild = obj[key].accident
+            }
+        })
+        
+        ShifterItem = (Object.keys(objChild).map((childKey, index) => {
+            //  获取高亮项index
+            if (objChild[childKey].type_index === current_index) {
+                classIndex = objChild[childKey].class_index
+            }
+
+            //  点击高亮项不会派发shifterClick事件
+            if (index === classIndex) {
+                return  <li className="active" 
+                            key={index}>{objChild[childKey].name}
+                            <span>/</span>
+                        </li>;
+            }
+            else {
+                return  <li key={index} 
+                            onClick={this.shifterClick.bind(this, (minIndex + index))}>
+                            {objChild[childKey].name}
+                            <span>/</span>
+                        </li>;
+            }
+        }))
+        return ShifterItem;
     }
 
     private shifterClick(index: number) {
