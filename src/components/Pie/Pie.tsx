@@ -1,3 +1,10 @@
+/*
+ *  接收currnet_index和state，用current_index匹配当前项
+ *  模块初始化时从新计算max_index，把count为0的项减去
+ *  影响因素：
+ *     外部：currnet_index、state
+ */
+
 import * as React from 'react';
 import { connect } from 'react-redux';
 import './Pie.less';
