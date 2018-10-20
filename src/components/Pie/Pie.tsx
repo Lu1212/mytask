@@ -1,55 +1,108 @@
 import * as React from 'react';
-import { connect } from 'react-redux'
-
-import './Pie.less'
+import { connect } from 'react-redux';
+import './Pie.less';
 
 interface Iprops {
-    state: any,
-    changeMaxIndex: any
+    data: {
+        min_index: number,
+        data: object
+    },
+    current_index: number,
+    changeMaxIndex: (newIndex: number) => void
 }
 
-interface Istate {
-    data: any,
-    pieData: any
-}
-
-class Pie extends React.Component<Iprops, Istate> {
+class Pie extends React.Component<Iprops, {}> {
     private right: React.RefObject<any>
-    constructor(props: any) {
-        super(props)
-        this.right = React.createRef()
-        this.state = {
-            data: [],
-            pieData: [],
-        }
+    constructor(props: Iprops) {
+        super(props);
+        this.right = React.createRef();
     }
 
     public componentWillMount() {
-        this.initData()
+        const nonZero = this.initData().nonZero;
+        this.calculateMaxIndex(nonZero)
     }
 
     public componentDidUpdate() {
-        const obj = this.state.data
-        const current_index = this.props.state.config.current_index
-        const legend: any = []
-        let sum = 0
-        let numerator = 0
-        let percent = 0
+        const legend = this.legendAndPercent().legend;
+        const percent = this.legendAndPercent().percent;
+        this.initPie(legend, percent)
+    }
+
+    public render() {
+        const leftItem = this.initLeftItem();
+
+        return (
+            <div className="Pie">
+                <ul className="left">{leftItem}</ul>
+                <div className="right" ref={this.right} />
+            </div>
+        )
+    }
+
+    // 这个函数返回两个值，legend为当前选中的数据名称，percent为当前项数值占总数百分比，为initData提供参数
+    private legendAndPercent() {
+        const obj = this.initData().pieData;
+        const current_index = this.props.current_index;
+        const legend: string[] = [];  //  图例文本
+        let sum = 0;  //  劳安事故总数
+        let numerator = 0;  //  当前项事故数
+        let percent = 0;  //  占比
         Object.keys(obj).map((key, index) => {
-            sum = sum + obj[key].count
+            sum = sum + obj[key].value
             if(current_index === (index + 9)) {
                 legend.push(obj[key].name)
-                numerator = obj[key].count
+                numerator = obj[key].value
             }
         })
         percent = numerator / sum * 100
 
-        this.initPie(legend, percent)
+        return {legend, percent};
     }
 
-    public initPie(legend: any, percent: any) {
-        const echarts = require('echarts')
-        const myChart = echarts.init(this.right.current)
+    //  这个函数返回两个值，pieData为排序后的数据，用于渲染组件。nonZero为非零数据长度，用于计算新的max_index
+    private initData() {
+        //  取到饼图数据，并从新排序，把数值为0的项放在末尾，返回排序后的数据
+        const obj = this.props.data.data;
+        const pieData: object[] = [];
+        const nonZeroData: object[] = [];
+        let nonZero: number;
+
+        Object.keys(obj).map((key) => {
+            if(obj[key].count !== 0) {
+                pieData.push({
+                    "name": obj[key].name,
+                    "value": obj[key].count
+                })
+                nonZeroData.push({
+                    "name": obj[key].name,
+                    "value": obj[key].count
+                })
+            }
+        })
+        nonZero = nonZeroData.length
+
+        Object.keys(obj).map((key) => {
+            if(obj[key].count === 0) {
+                pieData.push({
+                    "name": obj[key].name,
+                    "value": obj[key].count
+                })
+            }
+        })
+
+        return {pieData, nonZero};
+    }
+
+    //  重新计算整个数据的max_index,并通过changeMaxIndex函数修改数据的max_index
+    private calculateMaxIndex(num: number) {
+        const newIndex = this.props.data.min_index + (num - 1);
+        this.props.changeMaxIndex(newIndex)
+    }
+
+    private initPie(legend: string[], percent: number) {
+        const echarts = require('echarts');
+        const myChart = echarts.init(this.right.current);
 
         myChart.setOption({
             legend: {
@@ -69,7 +122,7 @@ class Pie extends React.Component<Iprops, Istate> {
             },
             series: [{
                 center: ['55%', '35%'],
-                data: this.state.pieData,
+                data: this.initData().pieData,
                 label: false,
                 labelLine: false,
                 radius: ['20%','50%'],
@@ -89,49 +142,14 @@ class Pie extends React.Component<Iprops, Istate> {
         })
 
         myChart.dispatchAction({
-            dataIndex: (this.props.state.config.current_index - 9),
             type: 'pieSelect',
+            dataIndex: (this.props.current_index - 9)
         })
     }
 
-    public initData() {
-        const obj = this.props.state.security.data
-        const data: any = []
-        const pieData: any = []
-        const pieNum: any = []
-        Object.keys(obj).map((key) => {
-            if(obj[key].count !== 0) {
-                data.push(obj[key])
-                pieNum.push(obj[key].count)
-                pieData.push({
-                    "name": obj[key].name,
-                    "value": obj[key].count
-                })
-            }
-        })
-
-        this.calculateMaxIndex(pieData.length)
-
-        Object.keys(obj).map((key) => {
-            if(obj[key].count === 0) {
-                data.push(obj[key])
-            }
-        })
-
-        this.setState({
-            data,
-            pieData
-        })
-    }
-
-    public calculateMaxIndex(num: any) {
-        const newIndex = this.props.state.security.min_index + (num - 1)
-        this.props.changeMaxIndex(newIndex)
-    }
-
-    public render() {
-        const obj = this.state.data
-        const current_index = this.props.state.config.current_index
+    private initLeftItem() {
+        const obj = this.initData().pieData
+        const current_index = this.props.current_index
         const item = Object.keys(obj).map((key, index) => {
             let isActive = ''
             if(current_index === (index + 9)) {
@@ -141,35 +159,31 @@ class Pie extends React.Component<Iprops, Istate> {
                         <li className={isActive} key={index}>
                             <span className="index">{index + 1}</span>
                                 {obj[key].name}
-                            <span className="count">{obj[key].count}</span>
+                            <span className="count">{obj[key].value}</span>
                         </li>
-                    )
+                    );
         })
 
-        return (
-            <div className="Pie">
-                <ul className="left">{item}</ul>
-                <div className="right" ref={this.right} />
-            </div>
-        )
+        return item;
     }
 }
 
 function mapStateToProps(state: any) {
     return {
-        state
-    }
+        data: state.security,
+        current_index: state.config.current_index
+    };
 }
 
 function mapDispatchToProps(dispatch: any) {
     return{ 
-        changeMaxIndex(newIndex: any) {
+        changeMaxIndex(newIndex: number) {
             dispatch({
-                index: newIndex,
                 type: 'CHANGE_MAX_INDEX',
+                index: newIndex
             })
         }
-    }
+    };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Pie);
