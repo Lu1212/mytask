@@ -33,7 +33,8 @@ class Pie extends React.Component<Iprops, {}> {
     public componentDidUpdate() {
         const legend = this.legendAndPercent().legend;
         const percent = this.legendAndPercent().percent;
-        this.initPie(legend, percent)
+        const pieData = this.initData().pieData;
+        this.initPie(legend, percent, pieData)
     }
 
     public render() {
@@ -107,7 +108,7 @@ class Pie extends React.Component<Iprops, {}> {
         this.props.changeMaxIndex(newIndex)
     }
 
-    private initPie(legend: string[], percent: number) {
+    private initPie(legend: string[], percent: number, pieData: object[]) {
         const echarts = require('echarts');
         const myChart = echarts.init(this.right.current);
 
@@ -129,7 +130,7 @@ class Pie extends React.Component<Iprops, {}> {
             },
             series: [{
                 center: ['55%', '35%'],
-                data: this.initData().pieData,
+                data: pieData,
                 label: false,
                 labelLine: false,
                 radius: ['20%','50%'],
