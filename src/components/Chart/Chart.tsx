@@ -21,6 +21,17 @@ interface Istate {
     readonly yAxis: number[]
 }
 
+enum TableType {
+    ChartTables = 'ChartTables',
+    TableNumber = 'TableNumber'
+}
+
+enum Color {
+    red = 'rgb(255, 0, 0)',
+    yellow = 'rgb(255, 255, 0)',
+    bule = 'rgb(92, 138, 249)'
+}
+
 class Chart extends React.Component<IProps, Istate> {
     private canvas: React.RefObject<any>
     constructor(props: IProps) {
@@ -36,37 +47,35 @@ class Chart extends React.Component<IProps, Istate> {
         this.setState({
             height: this.canvas.current.clientHeight
         })
-        this.drawLine()
+        this.drawLine(this.canvas.current, this.props.state, this.props.current_index, this.state.yAxis)
     }
 
     public componentDidUpdate() {
-        this.drawLine()
+        this.drawLine(this.canvas.current, this.props.state, this.props.current_index, this.state.yAxis)
     }
 
     public render() {
-        const ChartTables = this.initTable('ChartTables');
-        const TableNumber = this.initTable('TableNumber');
-        const DataList = this.initDataList();
+        const ChartTables = this.initTable(TableType.ChartTables, this.state.height, this.state.yAxis);
+        const TableNumber = this.initTable(TableType.TableNumber, this.state.height, this.state.yAxis);
+        const DataList = this.initDataList(this.props.state, this.props.current_index);
 
-        return (
-            <div className="Chart">
-                <ul className="ChartTable">
-                    {ChartTables}
-                </ul>
-                <ul className="TableNumbers">
-                    {TableNumber}
-                    <span className="zero">0</span>
-                </ul>
-                <canvas id="canvas" ref={this.canvas} />
-                <ul className="DataList">{DataList}</ul>
-            </div>
-        );
+        return (<div className="Chart">
+                    <ul className="ChartTable">
+                        {ChartTables}
+                    </ul>
+                    <ul className="TableNumbers">
+                        {TableNumber}
+                        <span className="zero">0</span>
+                    </ul>
+                    <canvas id="canvas" ref={this.canvas} />
+                    <ul className="DataList">{DataList}</ul>
+                </div>);
     }
 
     //  ChartTables和TableNumber的逻辑很像，合并到一起了
-    private initTable(type: string) {
-        const itemHeight = this.state.height / this.state.yAxis.length;
-        const table = this.state.yAxis.map((item, index) => {
+    private initTable(type: TableType, height: number, yAxis: number[]) {
+        const itemHeight = height / yAxis.length;
+        const table = yAxis.map((item, index) => {
             if(type === 'ChartTables') {
                 return (
                     <li className="row" style={{top: index * itemHeight}} key={index} />
@@ -75,7 +84,7 @@ class Chart extends React.Component<IProps, Istate> {
             else if(type === 'TableNumber') {
                 return (
                     <li className="row" style={{top: index * itemHeight}} key={index}>
-                        {this.state.yAxis[index]}
+                        {yAxis[index]}
                     </li>
                 );
             }
@@ -84,13 +93,11 @@ class Chart extends React.Component<IProps, Istate> {
         return table;
     }
 
-    private drawLine() {
-        const canvas = this.canvas.current;
+    private drawLine(cavRef: any, obj: object, currentIndex: number, yAxis: number[], lineColor = Color) {
+        const canvas = cavRef;
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
         const context = canvas.getContext("2d");
-        const obj = this.props.state;
-        const current_index = this.props.current_index;
         let objChild: any;
         let data: any;  //  current_index对应的事故数据
         const dataLen: number[] = [];  //  data中每个子项的长度值组成的数组
@@ -98,14 +105,14 @@ class Chart extends React.Component<IProps, Istate> {
         //  这里找到current_index对应的data，并将每个部门数据中子项的长度保存在dataLen中
         Object.keys(obj).map((key) => {
             if ((obj[key].type === 'line') &&
-                (obj[key].min_index <= current_index) &&
-                (current_index <= obj[key].max_index)) {
+                (obj[key].min_index <= currentIndex) &&
+                (currentIndex <= obj[key].max_index)) {
                 objChild = obj[key].accident
             }
         })
 
         Object.keys(objChild).map((childKey) => {
-            if (objChild[childKey].type_index === current_index) {
+            if (objChild[childKey].type_index === currentIndex) {
                 data = objChild[childKey].data;
             }
         })
@@ -115,22 +122,22 @@ class Chart extends React.Component<IProps, Istate> {
         })
 
         Object.keys(data).map((dataKey, index) => {
-            const maxNum = Math.max(...this.state.yAxis);
-            const width = this.canvas.current.clientWidth / (Math.max(...dataLen));  //  横坐标系数
-            const height = this.canvas.current.clientHeight / maxNum;  //  纵坐标系数，代表单位数据在屏幕所占高度
+            const maxNum = Math.max(...yAxis);
+            const width = cavRef.clientWidth / (Math.max(...dataLen));  //  横坐标系数
+            const height = cavRef.clientHeight / maxNum;  //  纵坐标系数，代表单位数据在屏幕所占高度
             let color: string;  //  线的颜色
             const dataChild = data[dataKey];
             const arr: number[] = [];  //  将每个部门对应的数值放在这里，代表每月事故数量的纵坐标
                 
             //  根据部门的名称确定线的颜色，可自行修改每个部门的线条颜色
             if (dataKey === 'ChengDu') {
-                color = 'rgb(255, 0, 0)'
+                color = lineColor.red
             }
             else if (dataKey === 'GuiYang') {
-                color = 'rgb(255, 255, 0)'
+                color = lineColor.yellow
             }
             else {
-                color = 'rgb(92, 138, 249)'
+                color = lineColor.bule
             }
                     
             Object.keys(dataChild).map((childItem) => {
@@ -151,7 +158,7 @@ class Chart extends React.Component<IProps, Istate> {
                 for(let k = 1; k < (arr.length - 1); k ++) {
                     context.lineTo((width * k) + (width / 2), height * (maxNum - arr[k]))
                 }
-                context.lineTo(this.canvas.current.clientWidth, height * (maxNum - arr[arr.length - 1]))
+                context.lineTo(cavRef.clientWidth, height * (maxNum - arr[arr.length - 1]))
             }
                         
             context.strokeStyle = color
@@ -159,9 +166,7 @@ class Chart extends React.Component<IProps, Istate> {
         })
     }
 
-    private initDataList() {
-        const obj = this.props.state;
-        const current_index = this.props.current_index;
+    private initDataList(obj: object, currentIndex: number) {
         let objChild: any;
         let data: any;  //  current_index对应的事故数据
         const dataLen: number[] = [];  //  data中每个子项的长度值组成的数组，顺序与dataVal对应
@@ -169,14 +174,14 @@ class Chart extends React.Component<IProps, Istate> {
 
         Object.keys(obj).map((key) => {
             if ((obj[key].type === 'line') &&
-                (obj[key].min_index <= current_index) &&
-                (current_index <= obj[key].max_index)) {
+                (obj[key].min_index <= currentIndex) &&
+                (currentIndex <= obj[key].max_index)) {
                 objChild = obj[key].accident
             }
         })
 
         Object.keys(objChild).map((childKey) => {
-            if (objChild[childKey].type_index === current_index) {
+            if (objChild[childKey].type_index === currentIndex) {
                 //  根据current_index选出相对应的data
                 data = objChild[childKey].data
             }

@@ -10,7 +10,7 @@
  *  功能：点击shifter的按钮时将点击的按钮的index与current_index落在的[min_index ~ max_index]区间的min_index相加得出新的current_index并派发出去
  */
 
-import * as React from 'react';;
+import * as React from 'react';
 import { connect } from 'react-redux';
 import './Shifter.less'
 
@@ -26,35 +26,33 @@ class Shifter extends React.Component<Iprops, {}> {
     }
     
     public render() {
-        const ShifterItem = this.initShifterItem();
+        const ShifterItem = this.initShifterItem(this.props.state, this.props.current_index);
 
         //  由current_index决定是否显示组件
         return (
             <React.Fragment>
                 {(this.props.current_index < 9) &&
-                    <ul className="Shifter">
-                        {ShifterItem}
-                    </ul>}
+                <ul className="Shifter">
+                    {ShifterItem}
+                </ul>}
             </React.Fragment>
         );
     }
 
-    private initShifterItem(): JSX.Element | undefined {
-        const obj = this.props.state;
-        const current_index = this.props.current_index;
+    private initShifterItem(obj: object, currentINdex: number, NUM = 9): JSX.Element | undefined {
         let classIndex: number;
         let minIndex: number;
         let objChild: any;
         let ShifterItem: any;
         
-        if (this.props.current_index >= 9) {
+        if (currentINdex >= NUM) {
             return
         }
         
         Object.keys(obj).map((key) => {
             if ((obj[key].type === 'line') &&
-                (obj[key].min_index <= current_index) &&
-                (current_index <= obj[key].max_index)) {
+                (obj[key].min_index <= currentINdex) &&
+                (currentINdex <= obj[key].max_index)) {
                 minIndex = obj[key].min_index
                 objChild = obj[key].accident
             }
@@ -62,20 +60,19 @@ class Shifter extends React.Component<Iprops, {}> {
         
         ShifterItem = (Object.keys(objChild).map((childKey, index) => {
             //  获取高亮项index
-            if (objChild[childKey].type_index === current_index) {
+            if (objChild[childKey].type_index === currentINdex) {
                 classIndex = objChild[childKey].class_index
             }
 
             //  点击高亮项不会派发shifterClick事件
             if (index === classIndex) {
-                return  <li className="active" 
-                            key={index}>{objChild[childKey].name}
+                return  <li className="active" key={index}>
+                            {objChild[childKey].name}
                             <span>/</span>
                         </li>;
             }
             else {
-                return  <li key={index} 
-                            onClick={this.shifterClick.bind(this, (minIndex + index))}>
+                return  <li key={index} onClick={this.shifterClick.bind(this, (minIndex + index))}>
                             {objChild[childKey].name}
                             <span>/</span>
                         </li>;

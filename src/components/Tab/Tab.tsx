@@ -22,46 +22,37 @@ class Tab extends React.Component<Iprops, {}> {
     }
 
     public render() {
-        const tabItem = this.initTabItem();
+        const tabItem = this.initTabItem(this.props.state, this.props.current_index);
 
-        return (
-            <ul className="Tab">
-                {tabItem}
-            </ul>
-        )
+        return (<ul className="Tab">
+                    {tabItem}
+                </ul>)
     }
 
-    private tabClick(index: number) {
-        this.props.changeIndex(index)
-    }
-
-    private initTabItem() {
-        const obj = this.props.state;
-        
+    private initTabItem(obj: object, currentIndex: number) {
         //  遍历obj，若current_index在当前项min_index ~ max_index区间内，则高亮当前项
         const tabItem = Object.keys(obj).map((key, index) => {
-            const current_index = this.props.current_index;
             let isCruuent = '';
             
             if (!obj[key].ZH_name) {
                 return;
             }
 
-            if ((obj[key].min_index <= current_index) &&
-                (current_index <= obj[key].max_index)) {
+            if ((obj[key].min_index <= currentIndex) &&
+                (currentIndex <= obj[key].max_index)) {
                 isCruuent = 'current'
             }
 
-            return (
-                //  点击tab将current_index设置为tab对应的min_index实现跳转
-                <li className={isCruuent}
-                    key={index} 
-                    onClick={this.tabClick.bind(this, obj[key].min_index)}>
-                    {obj[key].ZH_name}
-                </li>
-            );
+            //  点击tab将current_index设置为tab对应的min_index实现跳转
+            return (<li className={isCruuent} key={index} onClick={this.tabClick.bind(this, obj[key].min_index)}>
+                        {obj[key].ZH_name}
+                    </li>);
         });
         return tabItem;
+    }
+
+    private tabClick(index: number) {
+        this.props.changeIndex(index)
     }
 }
 
@@ -73,7 +64,7 @@ function mapStateToProps(state: any) {
 }
 
 function mapDispatchToProps(dispatch: any) {
-    return{ 
+    return { 
         changeIndex(newIndex: number) {
             dispatch({
                 type: 'CHANGE_INDEX',
