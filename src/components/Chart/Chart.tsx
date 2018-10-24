@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import './Chart.less';
 
 interface IProps {
-    state: any,
+    state: object,
     current_index: number
 }
 

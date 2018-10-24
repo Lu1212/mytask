@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import './Tab.less';
 
 interface Iprops {
-    state: any,
+    state: object,
     current_index: number,
     changeIndex: (newIndex: number) => void
 }

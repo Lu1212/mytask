@@ -15,7 +15,7 @@ import { connect } from 'react-redux';
 import './Shifter.less'
 
 interface Iprops {
-    state: any,
+    state: object,
     current_index: number,
     changeIndex: (newIndex: number) => void
 }
