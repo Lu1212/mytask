@@ -18,7 +18,7 @@ interface IProps {
 
 interface Istate {
     height: number,
-    yAxis: number[]
+    readonly yAxis: number[]
 }
 
 class Chart extends React.Component<IProps, Istate> {
