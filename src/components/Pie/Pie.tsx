@@ -19,59 +19,32 @@ interface Iprops {
 }
 
 class Pie extends React.Component<Iprops, {}> {
-    private right: React.RefObject<any>
+    private right: React.RefObject<HTMLDivElement>
     constructor(props: Iprops) {
         super(props);
         this.right = React.createRef();
     }
 
     public componentWillMount() {
-        const nonZero = this.initData().nonZero;
-        this.calculateMaxIndex(nonZero)
+        this.calculateMaxIndex(this.initData(this.props.data.data).nonZero)
     }
 
     public componentDidUpdate() {
-        const legend = this.legendAndPercent().legend;
-        const percent = this.legendAndPercent().percent;
-        const pieData = this.initData().pieData;
-        this.initPie(legend, percent, pieData)
+        this.initPie(this.right.current, this.initData(this.props.data.data).pieData, this.props.current_index)
     }
 
     public render() {
-        const leftItem = this.initLeftItem();
+        const leftItem = this.initLeftItem(this.initData(this.props.data.data).pieData, this.props.current_index);
 
-        return (
-            <div className="Pie">
-                <ul className="left">{leftItem}</ul>
-                <div className="right" ref={this.right} />
-            </div>
-        )
-    }
-
-    // 这个函数返回两个值，legend为当前选中的数据名称，percent为当前项数值占总数百分比，为initData提供参数
-    private legendAndPercent() {
-        const obj = this.initData().pieData;
-        const current_index = this.props.current_index;
-        const legend: string[] = [];  //  图例文本
-        let sum = 0;  //  劳安事故总数
-        let numerator = 0;  //  当前项事故数
-        let percent = 0;  //  占比
-        Object.keys(obj).map((key, index) => {
-            sum = sum + obj[key].value
-            if (current_index === (index + 9)) {
-                legend.push(obj[key].name)
-                numerator = obj[key].value
-            }
-        })
-        percent = numerator / sum * 100
-
-        return {legend, percent};
+        return (<div className="Pie">
+                    <ul className="left">{leftItem}</ul>
+                    <div className="right" ref={this.right} />
+                </div>)
     }
 
     //  这个函数返回两个值，pieData为排序后的数据，用于渲染组件。nonZero为非零数据长度，用于计算新的max_index
-    private initData() {
+    private initData(obj: object) {
         //  取到饼图数据，并从新排序，把数值为0的项放在末尾，返回排序后的数据
-        const obj = this.props.data.data;
         const pieData: object[] = [];
         const nonZeroData: object[] = [];
         let nonZero: number;
@@ -108,9 +81,24 @@ class Pie extends React.Component<Iprops, {}> {
         this.props.changeMaxIndex(newIndex)
     }
 
-    private initPie(legend: string[], percent: number, pieData: object[]) {
+    private initPie(ref: HTMLElement | null, pieData: object[], currentIndex: number, NUM = 9) {
         const echarts = require('echarts');
-        const myChart = echarts.init(this.right.current);
+        const myChart = echarts.init(ref);
+
+        const legend: string[] = [];  //  图例文本
+        let sum = 0;  //  劳安事故总数
+        let numerator = 0;  //  当前项事故数
+        let percent = 0;  //  占比
+
+        //  计算legend和percent的值
+        Object.keys(pieData).map((key, index) => {
+            sum = sum + pieData[key].value
+            if (currentIndex === (index + NUM)) {
+                legend.push(pieData[key].name)
+                numerator = pieData[key].value
+            }
+        })
+        percent = numerator / sum * 100
 
         myChart.setOption({
             legend: {
@@ -151,25 +139,21 @@ class Pie extends React.Component<Iprops, {}> {
 
         myChart.dispatchAction({
             type: 'pieSelect',
-            dataIndex: (this.props.current_index - 9)
+            dataIndex: (currentIndex - NUM)
         })
     }
-
-    private initLeftItem() {
-        const obj = this.initData().pieData
-        const current_index = this.props.current_index
-        const item = Object.keys(obj).map((key, index) => {
+    
+    private initLeftItem(pieData: object[], currentIndex: number, NUM = 9) {
+        const item = Object.keys(pieData).map((key, index) => {
             let isActive = ''
-            if (current_index === (index + 9)) {
+            if (currentIndex === (index + NUM)) {
                 isActive = 'active'
             }
-            return  (
-                        <li className={isActive} key={index}>
-                            <span className="index">{index + 1}</span>
-                                {obj[key].name}
-                            <span className="count">{obj[key].value}</span>
-                        </li>
-                    );
+            return  (<li className={isActive} key={index}>
+                        <span className="index">{index + 1}</span>
+                            {pieData[key].name}
+                        <span className="count">{pieData[key].value}</span>
+                    </li>);
         })
 
         return item;
