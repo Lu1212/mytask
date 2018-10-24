@@ -3,7 +3,7 @@
  *  当current_indx < 9（此时加载Pie组件）时隐藏
  *  影响因素：
  *    外部：current_index
- *    内部：26、30、34行修改部门名称
+ *    内部：19、20、21行修改部门名称
  *          同级目录下的less文件修改对应的标记颜色
  */
 
@@ -15,6 +15,12 @@ interface Iprops {
     current_index: number
 }
 
+enum DepartmentName {
+    ChengDu = '成都动车段',
+    GuiYang = '贵阳车辆段',
+    ChongQing = '重庆动车段',
+}
+
 function Department(props: Iprops) {
     let Departments: JSX.Element | null
 
@@ -23,15 +29,15 @@ function Department(props: Iprops) {
             <ul className="Department">
                 <li className="Department-item">
                     <span className="icon ChengDu" />
-                    <p className="name">成都动车段</p>
+                    <p className="name">{DepartmentName.ChengDu}</p>
                 </li>
                 <li className="Department-item">
                     <span className="icon GuiYang" />
-                    <p className="name">贵阳车辆段</p>
+                    <p className="name">{DepartmentName.GuiYang}</p>
                 </li>
                 <li className="Department-item">
                     <span className="icon ChongQing" />
-                    <p className="name">重庆动车段</p>
+                    <p className="name">{DepartmentName.ChongQing}</p>
                 </li>
             </ul>
         )
