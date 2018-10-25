@@ -44,6 +44,7 @@ class Chart extends React.Component<IProps, Istate> {
     }
 
     public componentDidMount() {
+        //  渲染完成后才能获取元素高度
         this.setState({
             height: this.canvas.current.clientHeight
         })
