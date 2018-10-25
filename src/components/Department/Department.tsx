@@ -25,22 +25,20 @@ function Department(props: Iprops) {
     let Departments: JSX.Element | null
 
     if (props.current_index < 9) {
-        Departments = (
-            <ul className="Department">
-                <li className="Department-item">
-                    <span className="icon ChengDu" />
-                    <p className="name">{DepartmentName.ChengDu}</p>
-                </li>
-                <li className="Department-item">
-                    <span className="icon GuiYang" />
-                    <p className="name">{DepartmentName.GuiYang}</p>
-                </li>
-                <li className="Department-item">
-                    <span className="icon ChongQing" />
-                    <p className="name">{DepartmentName.ChongQing}</p>
-                </li>
-            </ul>
-        )
+        Departments = (<ul className="Department">
+                            <li className="Department-item">
+                                <span className="icon ChengDu" />
+                                <p className="name">{DepartmentName.ChengDu}</p>
+                            </li>
+                            <li className="Department-item">
+                                <span className="icon GuiYang" />
+                                <p className="name">{DepartmentName.GuiYang}</p>
+                            </li>
+                            <li className="Department-item">
+                                <span className="icon ChongQing" />
+                                <p className="name">{DepartmentName.ChongQing}</p>
+                            </li>
+                        </ul>)
     }
     else {
         Departments = null
